@@ -1,11 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-header',
-  imports: [],
   templateUrl: './header.html',
-  styleUrl: './header.css'
+  styleUrls: ['./header.css']
 })
 export class Header {
+  @Output() homeClicked = new EventEmitter<void>();
 
+  navigateToLogin() {
+    this.homeClicked.emit();
+  }
 }

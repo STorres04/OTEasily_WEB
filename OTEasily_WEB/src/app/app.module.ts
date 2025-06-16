@@ -8,6 +8,7 @@ import { Header } from './shared/header/header';
 import { Footer } from './shared/footer/footer';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { Register } from './features/auth/register/register';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { HttpClientModule } from '@angular/common/http';
     Header,
     Footer,
     FormsModule,
+    Register,
     HttpClientModule
   ],
   providers: [],

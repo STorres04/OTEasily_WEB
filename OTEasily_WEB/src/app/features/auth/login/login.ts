@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import axios from 'axios';
 import { BASE_URL } from '../../../app.config';
 import { CommonModule } from '@angular/common';
@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./login.css']
 })
 export class Login {
+  @Output() registerClicked = new EventEmitter<void>();
   errorMessage: string | null = null;
 
   onSubmit(event: Event, formData: { usuario: string; password: string }) {
@@ -25,5 +26,9 @@ export class Login {
         console.error('Error en la autenticación:', error);
         this.errorMessage = error.response?.data?.mensajeResultado || 'Ocurrió un error inesperado.';
       });
+  }
+
+  onRegisterClick() {
+    this.registerClicked.emit();
   }
 }
