@@ -1,0 +1,21 @@
+
+    <div class="login-container">
+        <div *ngIf="errorMessage" class="error-container">
+            <button class="error-close" (click)="errorMessage = null">&times;</button>
+            <div class="error-title">¡Ups! Ha ocurrido un error</div>
+            <div class="error-message">{{ errorMessage }}</div>
+        </div>
+        <form class="login-form">
+            <img src="../../../assets/tcc_logo.png" alt="Logo" class="login-logo">
+            <h2>Iniciar Sesión</h2>
+            <label for="username">Usuario</label>
+            <input type="text" id="username" name="username" #username placeholder="Ingresa tu usuario" required>
+
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" name="password" #password placeholder="Ingresa tu contraseña" required>
+
+            <button type="button" (click)="onSubmit($event, { usuario: username.value, password: password.value })">Autenticar</button>
+            <a href="#" class="register-link">Registrar</a>
+        </form>
+    </div>
+

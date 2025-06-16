@@ -1,0 +1,85 @@
+/* Estilos para el header similares al login */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0; /* Eliminar padding para evitar espacios */
+  height: auto;
+  /*background: linear-gradient(to right, #e0e0e0, #f5f5f5);*/
+  background-color: #333; /* Color de fondo más claro */
+  /*box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);*/
+  margin-bottom: 1rem; /* Agregar espacio debajo del header */
+  border-radius: 8px;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 10; /* Asegurar que el header esté por encima de elementos con menor índice */
+}
+
+.header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Ajustes para el logo */
+.header .logo {
+  margin: 0;
+  padding: 0;
+  max-width: 100px; /* Ajustar el tamaño del logo */
+}
+
+.header .logo img {
+  max-height: 40px; /* Tamaño proporcional más pequeño */
+  width: auto;
+}
+
+/* Ajustes para el menú */
+.header .nav {
+  display: flex;
+  justify-content: flex-end; /* Mantener los elementos alineados a la derecha */
+  gap: 20px; /* Mantener espacio entre los elementos */
+  margin: 0;
+  padding: 0 10px; /* Añadir padding para mover el menú más hacia la derecha */
+}
+
+.header .nav ul {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.header .nav ul li {
+  margin: 0;
+  padding: 0;
+}
+
+.header .nav ul li a {
+  text-decoration: none;
+  color: #ffffff;
+  padding: 10px;
+  font-size: 1rem; /* Tamaño de fuente más pequeño */
+  font-family: 'Arial', sans-serif;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header .nav {
+    margin-top: 5px;
+    flex-direction: column;
+    gap: 5px;
+    justify-content: flex-end; /* Asegurar que los elementos estén alineados a la derecha */
+    width: 100%; /* Asegurar que el contenedor ocupe todo el ancho disponible */
+    padding-right: 10; /* Eliminar cualquier padding derecho */
+    box-sizing: border-box; /* Asegurar que el ancho incluya padding y bordes */
+    margin-right: 0; /* Eliminar cualquier margen derecho */
+  }
+}
