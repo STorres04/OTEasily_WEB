@@ -39,6 +39,13 @@ tr:hover {
   th, td {
     padding: 6px;
   }
+  td[data-label="Nombre de la Tarea"],
+  th[data-label="Nombre de la Tarea"],
+  td[data-label="Descripción"],
+  th[data-label="Descripción"] {
+    max-width: 110px;
+    font-size: 13px;
+  }
 }
 
 @media (max-width: 600px) {
@@ -325,4 +332,16 @@ table {
 }
 .anotaciones-table tr:hover {
   background-color: #ececec;
+}
+
+td[data-label="Nombre de la Tarea"],
+th[data-label="Nombre de la Tarea"],
+td[data-label="Descripción"],
+th[data-label="Descripción"] {
+  max-width: 180px;
+  min-width: 90px;
+  word-break: break-word;
+  white-space: pre-line;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
