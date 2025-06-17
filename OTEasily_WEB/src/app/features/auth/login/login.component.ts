@@ -42,21 +42,27 @@ export class LoginComponent {
         const apiUrlUsuario = `${BASE_URL}/OTEasily/Usuarios/consultar`; 
 
         // Llama al endpoint para obtener el ID y nombre del usuario
-          axios.post(apiUrlUsuario, {
-              usuario: usuario
-            }, {
-              headers: { Authorization: `Bearer ${tokenJWT}` }
-            })
-            .then(response => {
-                const idUsuario = response.data.idUsuario;
-                const nombreUsuario = response.data.nombreUsuario;
+        axios.post(apiUrlUsuario, {
+            usuario: usuario
+          }, {
+            headers: { Authorization: `Bearer ${tokenJWT}` }
+          })
+          .then(responseUsuario => {
+              // Acepta tanto idusuario como idUsuario por robustez
+              const idUsuario = responseUsuario.data.idusuario || responseUsuario.data.idUsuario;
+              const nombreUsuario = responseUsuario.data.nombre || responseUsuario.data.nombreUsuario;
+              if (idUsuario && idUsuario !== 'undefined') {
                 this.authService.setAuth(usuario, tokenJWT, idUsuario, nombreUsuario);
-            })
-            .catch(error => {
-                this.errorMessage = error.response?.data?.mensajeResultado || 'Ocurrió un error inesperado.';
-            });
-        this.errorMessage = null;
-        this._router.navigate(['/menu']);
+              } else {
+                this.errorMessage = 'No se pudo obtener el id del usuario.';
+                return;
+              }
+              this.errorMessage = null;
+              this._router.navigate(['/menu']);
+          })
+          .catch(error => {
+              this.errorMessage = error.response?.data?.mensajeResultado || 'Ocurrió un error inesperado.';
+          });
       })
       .catch(error => {
         this.errorMessage = error.response?.data?.mensajeResultado || 'Ocurrió un error inesperado.';

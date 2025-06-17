@@ -34,7 +34,9 @@ export class AuthService {
 
   getIdUsuario(): string | null {
     if (this.isBrowser()) {
-      return localStorage.getItem('idUsuario');
+      const id = localStorage.getItem('idUsuario');
+      if (!id || id === 'undefined') return null;
+      return id;
     }
     return null;
   }

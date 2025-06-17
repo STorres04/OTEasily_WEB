@@ -1,19 +1,37 @@
 <!-- Barra de filtros -->
 <div class="task-filters">
-  <input type="text" name="usuario" class="filter-select" placeholder="Buscar usuario..." [(ngModel)]="selectedUsuario" (input)="onUsuarioInput($event)" list="usuariosList">
-  <datalist id="usuariosList">
-    <option *ngFor="let user of usuariosSugeridos" [value]="user.nombre">{{user.nombre}}</option>
-  </datalist>
-  <input type="date" name="fechaInicio" class="filter-date" placeholder="Fecha inicio" [(ngModel)]="selectedFechaInicio">
-  <input type="date" name="fechaFin" class="filter-date" placeholder="Fecha fin" [(ngModel)]="selectedFechaFin">
-  <select name="prioridad" class="filter-select" [(ngModel)]="selectedPrioridad">
-    <option value="">Todas las prioridades</option>
-    <option value="0">Prioridad Baja</option>
-    <option value="1">Prioridad Media</option>
-    <option value="2">Prioridad Alta</option>
-  </select>
-  <button class="filter-btn" (click)="buscarTareas()">Buscar</button>
-  <button class="filter-btn clear-btn" (click)="limpiarFiltros()">Limpiar</button>
+  <div class="filter-group">
+    <label for="usuario">Usuario:</label>
+    <input id="usuario" type="text" name="usuario" class="filter-select" placeholder="Buscar usuario..." [(ngModel)]="selectedUsuario" (input)="onUsuarioInput($event)" list="usuariosList">
+    <datalist id="usuariosList">
+      <option *ngFor="let user of usuariosSugeridos" [value]="user.nombre">{{user.nombre}}</option>
+    </datalist>
+  </div>
+  
+  <div class="filter-group">
+    <label for="fechaInicio">Desde:</label>
+    <input id="fechaInicio" type="date" name="fechaInicio" class="filter-date" placeholder="Fecha inicio" [(ngModel)]="selectedFechaInicio">
+  </div>
+  
+  <div class="filter-group">
+    <label for="fechaFin">Hasta:</label>
+    <input id="fechaFin" type="date" name="fechaFin" class="filter-date" placeholder="Fecha fin" [(ngModel)]="selectedFechaFin">
+  </div>
+  
+  <div class="filter-group">
+    <label for="prioridad">Prioridad:</label>
+    <select id="prioridad" name="prioridad" class="filter-select" [(ngModel)]="selectedPrioridad">
+      <option value="">Todas</option>
+      <option value="0">Baja</option>
+      <option value="1">Media</option>
+      <option value="2">Alta</option>
+    </select>
+  </div>
+  
+  <div class="filter-actions">
+    <button class="filter-btn" (click)="buscarTareas()">Buscar</button>
+    <button class="filter-btn clear-btn" (click)="limpiarFiltros()">Limpiar</button>
+  </div>
 </div>
 
 <div *ngIf="notificacionMensaje" class="notificacion-container" [ngClass]="notificacionTipo">

@@ -54,7 +54,7 @@ export class TaskComponent implements OnInit {
   ) {
     // Obtener el token y el ID del usuario desde el servicio de autenticación
     this.token = this.authService.getToken();
-    this.idusuario = '6C670B0BD2284CE88F94CD3D8FA6C6C4';//this.authService.getIdUsuario();
+    this.idusuario = this.authService.getIdUsuario();
   }
 
   ngOnInit() {
