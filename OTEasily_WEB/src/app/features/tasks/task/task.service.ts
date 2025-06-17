@@ -17,6 +17,16 @@ export interface Task {
   responsable: string;
 }
 
+export interface Anotacion {
+  idanotacion: string;
+  idtarea: string;
+  tipoAnotacion: string;
+  descripcion: string;
+  accion: string;
+  fechaAnotacion: string;
+  fechaCreacion: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class TaskService {
   getTasks(token: string, idusuario: string, fechaInicio?: string, fechaFin?: string, prioridad?: number): Observable<Task[]> {
@@ -31,6 +41,23 @@ export class TaskService {
       })
       .then(response => {
         observer.next(response.data);
+        observer.complete();
+      })
+      .catch(error => {
+        observer.error(error);
+      });
+    });
+  }
+
+  getAnotacionesPorTarea(token: string, idtarea: string): Observable<Anotacion[]> {
+    return new Observable(observer => {
+      axios.post(`${BASE_URL}/OTEasily/Task/Anotaciones/consultar`, {
+        idtarea: idtarea
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(response => {
+        observer.next(response.data?.anotaciones || []);
         observer.complete();
       })
       .catch(error => {

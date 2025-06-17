@@ -16,9 +16,16 @@
   <button class="filter-btn clear-btn" (click)="limpiarFiltros()">Limpiar</button>
 </div>
 
+<div *ngIf="notificacionMensaje" class="notificacion-container" [ngClass]="notificacionTipo">
+  <button class="notificacion-close" (click)="notificacionMensaje = null">&times;</button>
+  <div class="notificacion-title">{{ notificacionTipo === 'success' ? '¡Éxito!' : 'Error' }}</div>
+  <div class="notificacion-message">{{ notificacionMensaje }}</div>
+</div>
+
 <table border="1" style="width: 100%; border-collapse: collapse;">
   <thead>
     <tr>
+      <th class="hidden-col">ID</th>
       <th>Acciones</th>
       <th>Nombre de la Tarea</th>
       <th>Descripción</th>
@@ -34,9 +41,12 @@
   </thead>
   <tbody>
     <tr *ngFor="let task of tasks">
+      <td class="hidden-col">{{task.idtarea}}</td>
       <td>
-        <img src="assets/error-icon.png" alt="Error" class="icon-table">
+        <img src="assets/error-icon.png" alt="Eliminar" class="icon-table icon-delete" (click)="confirmarEliminar(task)">
         <img src="assets/ver-icon.png" alt="Ver" class="icon-table icon-ver" (click)="verTarea(task)">
+        <img src="assets/gestion-icon.png" alt="Gestionar" class="icon-table icon-gestion" (click)="gestionarTarea(task)">
+        <img src="assets/pen-icon.png" alt="Editar" class="icon-table icon-pen" (click)="editarTarea(task)">
       </td>
       <td data-label="Nombre de la Tarea">{{task.nombreTarea}}</td>
       <td data-label="Descripción">{{task.descripcionTarea}}</td>
@@ -55,7 +65,7 @@
 <!-- Popup de detalle de tarea -->
 <div class="popup-overlay" *ngIf="mostrarPopup">
   <div class="popup-content">
-    <button class="popup-close" (click)="cerrarPopup()">&times;</button>
+    <button class="close-btn" (click)="cerrarPopup()">&times;</button>
     <h2>Detalle de Tarea</h2>
     <div class="popup-row"><span class="popup-label">Nombre:</span> {{tareaSeleccionada?.nombreTarea}}</div>
     <div class="popup-row"><span class="popup-label">Descripción:</span> {{tareaSeleccionada?.descripcionTarea}}</div>
@@ -67,5 +77,133 @@
     <div class="popup-row"><span class="popup-label">Progreso:</span> {{tareaSeleccionada?.progreso}}</div>
     <div class="popup-row"><span class="popup-label">Prioridad:</span> {{tareaSeleccionada?.prioridad}}</div>
     <div class="popup-row"><span class="popup-label">Responsable:</span> {{tareaSeleccionada?.responsable}}</div>
+    <div style="margin-top: 18px; text-align: right;">
+      <button class="filter-btn" (click)="verAnotacionesTarea(tareaSeleccionada)">Ver anotaciones</button>
+    </div>
+  </div>
+</div>
+
+<!-- Popup de anotaciones de tarea -->
+<div class="popup-overlay" *ngIf="mostrarPopupAnotaciones">
+  <div class="popup-content">
+    <button class="close-btn" (click)="cerrarPopupAnotaciones()">&times;</button>
+    <h2>Anotaciones de la tarea</h2>
+    <div *ngIf="anotacionesCargando" class="popup-row">Cargando anotaciones...</div>
+    <div *ngIf="!anotacionesCargando && anotacionesTarea.length === 0" class="popup-row">No hay anotaciones para esta tarea.</div>
+    <div *ngIf="!anotacionesCargando && anotacionesTarea.length > 0">
+      <table class="anotaciones-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Tipo</th>
+            <th>Descripción</th>
+            <th>Acción</th>
+            <th>Fecha Anotación</th>
+            <th>Fecha Creación</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let anot of anotacionesTarea">
+            <td>{{anot.idanotacion}}</td>
+            <td>{{anot.tipoAnotacion}}</td>
+            <td>{{anot.descripcion}}</td>
+            <td>{{anot.accion}}</td>
+            <td>{{anot.fechaAnotacion | date:'shortDate'}}</td>
+            <td>{{anot.fechaCreacion | date:'shortDate'}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Popup de confirmación de eliminación -->
+<div class="popup-overlay" *ngIf="mostrarPopupEliminar">
+  <div class="popup-content">
+    <button class="close-btn" (click)="cancelarEliminar()">&times;</button>
+    <h2>Eliminar tarea</h2>
+    <div class="popup-row">¿Desea eliminar la tarea con ID <b>{{tareaEliminarId}}</b>?</div>
+    <div style="margin-top: 18px; text-align: right;">
+      <button class="filter-btn" (click)="eliminarTarea()">Sí</button>
+      <button class="filter-btn clear-btn" (click)="cancelarEliminar()">No</button>
+    </div>
+  </div>
+</div>
+
+<!-- Popup de edición de tarea -->
+<div class="popup-overlay" *ngIf="mostrarPopupEditar">
+  <div class="popup-content">
+    <button class="close-btn" (click)="cerrarPopupEditar()">&times;</button>
+    <h2>Editar Tarea</h2>
+    <form (ngSubmit)="guardarEdicion()">
+      <div class="popup-row"><span class="popup-label">Nombre:</span>
+        <input [(ngModel)]="tareaEditarForm.nombreTarea" name="nombreTarea" class="popup-input" required />
+      </div>
+      <div class="popup-row"><span class="popup-label">Descripción:</span>
+        <input [(ngModel)]="tareaEditarForm.descripcionTarea" name="descripcionTarea" class="popup-input" required />
+      </div>
+      <div class="popup-row"><span class="popup-label">Fecha de Inicio:</span>
+        <input type="date" [(ngModel)]="tareaEditarForm.fechaIncio" name="fechaIncio" class="popup-input" required />
+      </div>
+      <div class="popup-row"><span class="popup-label">Fecha de Fin:</span>
+        <input type="date" [(ngModel)]="tareaEditarForm.fechaFin" name="fechaFin" class="popup-input" required />
+      </div>
+      <div class="popup-row"><span class="popup-label">Fecha de Cierre:</span>
+        <input type="date" [(ngModel)]="tareaEditarForm.fechaCierre" name="fechaCierre" class="popup-input" />
+      </div>
+      <div class="popup-row"><span class="popup-label">Fecha de Creación:</span>
+        <input type="date" [(ngModel)]="tareaEditarForm.fechaCreacion" name="fechaCreacion" class="popup-input" required />
+      </div>
+      <div class="popup-row"><span class="popup-label">Estado:</span>
+        <select [(ngModel)]="tareaEditarForm.estado" name="estado" class="popup-input" required>
+          <option value="0">Sin Iniciar</option>
+          <option value="1">En progreso</option>
+          <option value="2">Finalizada</option>
+          <option value="3">Cancelada</option>
+        </select>
+      </div>
+      <div class="popup-row"><span class="popup-label">Progreso:</span>
+        <input type="number" min="0" max="100" [(ngModel)]="tareaEditarForm.progreso" name="progreso" class="popup-input" required />
+      </div>
+      <div class="popup-row"><span class="popup-label">Prioridad:</span>
+        <select [(ngModel)]="tareaEditarForm.prioridad" name="prioridad" class="popup-input" required>
+          <option value="0">Prioridad Baja</option>
+          <option value="1">Prioridad Media</option>
+          <option value="2">Prioridad Alta</option>
+        </select>
+      </div>
+      <div class="popup-row"><span class="popup-label">Responsable:</span>
+        <select [(ngModel)]="tareaEditarForm.responsable" name="responsable" class="popup-input" required>
+          <option *ngFor="let user of usuariosSugeridos" [value]="user.idusuario">{{user.nombre}}</option>
+        </select>
+      </div>
+      <div style="margin-top: 18px; text-align: right;">
+        <button class="filter-btn" type="submit">Guardar</button>
+        <button class="filter-btn clear-btn" type="button" (click)="cerrarPopupEditar()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Popup de gestionar/anotación -->
+<div class="popup-overlay" *ngIf="mostrarPopupGestionar">
+  <div class="popup-content">
+    <button class="close-btn" (click)="cerrarPopupGestionar()">&times;</button>
+    <h2>Agregar Anotación</h2>
+    <form (ngSubmit)="guardarAnotacion()">
+      <div class="popup-row"><span class="popup-label">Descripción:</span>
+        <input [(ngModel)]="anotacionForm.descripcion" name="descripcion" class="popup-input" required />
+      </div>
+      <div class="popup-row"><span class="popup-label">Acción:</span>
+        <input [(ngModel)]="anotacionForm.accion" name="accion" class="popup-input" required />
+      </div>
+      <div class="popup-row"><span class="popup-label">Progreso %:</span>
+        <input type="number" min="0" max="100" [(ngModel)]="anotacionForm.progreso" name="progresoAnotacion" class="popup-input" required />
+      </div>
+      <div style="margin-top: 18px; text-align: right;">
+        <button class="filter-btn" type="submit">Guardar</button>
+        <button class="filter-btn clear-btn" type="button" (click)="cerrarPopupGestionar()">Cancelar</button>
+      </div>
+    </form>
   </div>
 </div>

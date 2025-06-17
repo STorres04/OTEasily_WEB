@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TaskService, Task } from './task.service';
+import { TaskService, Task, Anotacion } from './task.service';
 import { AuthService } from '../../../shared/auth.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -28,6 +28,24 @@ export class TaskComponent implements OnInit {
   tareaSeleccionada: Task | null = null;
   mostrarPopup: boolean = false;
 
+  mostrarPopupEliminar: boolean = false;
+  tareaEliminarId: string | null = null;
+
+  mostrarPopupEditar: boolean = false;
+  tareaEditar: Task | null = null;
+  tareaEditarForm: any = {};
+
+  mostrarPopupGestionar: boolean = false;
+  tareaGestionar: Task | null = null;
+  anotacionForm: any = {};
+
+  mostrarPopupAnotaciones: boolean = false;
+  anotacionesTarea: Anotacion[] = [];
+  anotacionesCargando: boolean = false;
+
+  notificacionMensaje: string | null = null;
+  notificacionTipo: 'success' | 'error' | null = null;
+
   constructor(
     private taskService: TaskService,
     private authService: AuthService,
@@ -53,7 +71,7 @@ export class TaskComponent implements OnInit {
 
   cargarUsuarios() {
     const token = this.token;
-    const url = `${BASE_URL}/OTEasily/Usuarios/Maestro/consultar`; // Reemplaza por la URL real
+    const url = `${BASE_URL}/OTEasily/Usuarios/Maestro/consultar`; 
     if (!token) return;
     axios.get(url, {
       headers: { Authorization: `Bearer ${token}` }
@@ -132,5 +150,169 @@ export class TaskComponent implements OnInit {
   cerrarPopup() {
     this.mostrarPopup = false;
     this.tareaSeleccionada = null;
+  }
+
+  confirmarEliminar(task: Task) {
+    this.tareaEliminarId = task.idtarea;
+    this.mostrarPopupEliminar = true;
+  }
+
+  cancelarEliminar() {
+    this.mostrarPopupEliminar = false;
+    this.tareaEliminarId = null;
+  }
+
+  mostrarNotificacion(mensaje: string, tipo: 'success' | 'error') {
+    this.notificacionMensaje = mensaje;
+    this.notificacionTipo = tipo;
+    setTimeout(() => {
+      this.notificacionMensaje = null;
+      this.notificacionTipo = null;
+    }, 3500);
+  }
+
+  eliminarTarea() {
+    if (!this.tareaEliminarId || !this.token) return;
+    const url = `${BASE_URL}/OTEasily/Task/eliminar`;
+    axios.post(url,{idtarea: this.tareaEliminarId}, {
+      headers: { Authorization: `Bearer ${this.token}` }
+    })
+    .then(response => {
+      this.mostrarPopupEliminar = false;
+      this.tareaEliminarId = null;
+      this.buscarTareas(); 
+      const mensaje = response?.data?.mensajeResultado || 'Tarea eliminada correctamente.';
+      this.mostrarNotificacion(mensaje, 'success');
+    })
+    .catch(error => {
+      this.mostrarPopupEliminar = false;
+      this.tareaEliminarId = null;
+      const mensaje = error?.response?.data?.mensajeResultado || 'No se pudo eliminar la tarea.';
+      this.mostrarNotificacion(mensaje, 'error');
+    });
+  }
+
+  editarTarea(task: Task) {
+    this.tareaEditar = task;
+    this.tareaEditarForm = { ...task };
+    this.mostrarPopupEditar = true;
+  }
+
+  cerrarPopupEditar() {
+    this.mostrarPopupEditar = false;
+    this.tareaEditar = null;
+    this.tareaEditarForm = {};
+  }
+
+  guardarEdicion() {
+    if (!this.tareaEditarForm || !this.token) return;
+    const url = `${BASE_URL}/OTEasily/Task/actualizar`;
+    let idusuario = this.tareaEditarForm.responsable;
+    const usuarioObj = this.usuariosSugeridos.find(u => u.idusuario === this.tareaEditarForm.responsable || u.nombre === this.tareaEditarForm.responsable);
+    if (usuarioObj) {
+      idusuario = usuarioObj.idusuario;
+    }
+    const tareaActualizada = {
+      idtarea: this.tareaEditarForm.idtarea,
+      nombreTarea: this.tareaEditarForm.nombreTarea,
+      descripcionTarea: this.tareaEditarForm.descripcionTarea,
+      fechaInicio: this.tareaEditarForm.fechaIncio,
+      fechaFin: this.tareaEditarForm.fechaFin,
+      fechaCierre: this.tareaEditarForm.fechaCierre,
+      estadoTarea: this.tareaEditarForm.estado,
+      estado: undefined,
+      prioridad: Number(this.tareaEditarForm.prioridad),
+      progreso: Number(this.tareaEditarForm.progreso),
+      idusuario: idusuario
+    };
+    axios.post(url, tareaActualizada, {
+      headers: { Authorization: `Bearer ${this.token}` }
+    })
+    .then(response => {
+      this.mostrarPopupEditar = false;
+      this.tareaEditar = null;
+      this.tareaEditarForm = {};
+      this.buscarTareas();
+      const mensaje = response?.data?.mensajeResultado || 'Tarea actualizada correctamente.';
+      this.mostrarNotificacion(mensaje, 'success');
+    })
+    .catch(error => {
+      this.mostrarPopupEditar = false;
+      this.tareaEditar = null;
+      this.tareaEditarForm = {};
+      const mensaje = error?.response?.data?.mensajeResultado || 'No se pudo actualizar la tarea.';
+      this.mostrarNotificacion(mensaje, 'error');
+    });
+  }
+
+  gestionarTarea(task: Task) {
+    this.tareaGestionar = task;
+    this.anotacionForm = {
+      idtarea: task.idtarea,
+      tipoAnotacion: 1,
+      descripcion: '',
+      accion: '',
+      progreso: 0
+    };
+    this.mostrarPopupGestionar = true;
+  }
+
+  cerrarPopupGestionar() {
+    this.mostrarPopupGestionar = false;
+    this.tareaGestionar = null;
+    this.anotacionForm = {};
+  }
+
+  guardarAnotacion() {
+    if (!this.anotacionForm || !this.token) return;
+    const url = `${BASE_URL}/OTEasily/Task/Anotaciones/crear`;
+    const anotacion = {
+      idtarea: this.anotacionForm.idtarea,
+      tipoAnotacion: "1",
+      descripcion: this.anotacionForm.descripcion,
+      accion: this.anotacionForm.accion,
+      progreso: Number(this.anotacionForm.progreso)
+    };
+    axios.post(url, anotacion, {
+      headers: { Authorization: `Bearer ${this.token}` }
+    })
+    .then(response => {
+      this.mostrarPopupGestionar = false;
+      this.tareaGestionar = null;
+      this.anotacionForm = {};
+      this.buscarTareas();
+      const mensaje = response?.data?.mensajeResultado || 'Anotación guardada correctamente.';
+      this.mostrarNotificacion(mensaje, 'success');
+    })
+    .catch(error => {
+      this.mostrarPopupGestionar = false;
+      this.tareaGestionar = null;
+      this.anotacionForm = {};
+      const mensaje = error?.response?.data?.mensajeResultado || 'No se pudo guardar la anotación.';
+      this.mostrarNotificacion(mensaje, 'error');
+    });
+  }
+
+  verAnotacionesTarea(task: Task | null) {
+    if (!task || !this.token) return;
+    this.mostrarPopupAnotaciones = true;
+    this.anotacionesCargando = true;
+    this.anotacionesTarea = [];
+    this.taskService.getAnotacionesPorTarea(this.token, task.idtarea).subscribe({
+      next: (anotaciones) => {
+        this.anotacionesTarea = anotaciones;
+        this.anotacionesCargando = false;
+      },
+      error: () => {
+        this.anotacionesTarea = [];
+        this.anotacionesCargando = false;
+      }
+    });
+  }
+
+  cerrarPopupAnotaciones() {
+    this.mostrarPopupAnotaciones = false;
+    this.anotacionesTarea = [];
+    this.anotacionesCargando = false;
   }
 }
