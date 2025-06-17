@@ -1,7 +1,11 @@
 html, body {
-  width: 100vw;
-  max-width: 100vw;
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  height: 100vh;
   overflow-x: hidden;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .menu-container {
@@ -92,18 +96,19 @@ main {
   flex: 1;
   margin-left: 0;
   padding: 20px;
-  overflow-y: auto;
-  max-width: 100vw;
-  width: 100vw;
+  overflow-y: visible;
+  max-width: 100%;
+  width: 100%;
   box-sizing: border-box;
 }
 
 .layout {
   display: flex;
   flex: 1;
-  min-height: calc(100vh - 120px); /* Ajusta según el alto de header+footer */
-  width: 100vw;
-  max-width: 100vw;
+  min-height: unset;
+  height: auto;
+  width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
 }
 
@@ -139,8 +144,8 @@ main {
   .layout {
     flex-direction: column;
     min-height: unset;
-    width: 100vw;
-    max-width: 100vw;
+    width: 100%;
+    max-width: 100%;
   }
   .menu-container {
     width: 100%;
@@ -167,8 +172,8 @@ main {
     padding: 10px 0 0 0;
   }
   main {
-    max-width: 100vw;
-    width: 100vw;
+    max-width: 100%;
+    width: 100%;
     padding: 5px;
   }
 }

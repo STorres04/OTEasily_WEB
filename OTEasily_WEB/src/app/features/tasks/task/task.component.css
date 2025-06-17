@@ -45,6 +45,10 @@ tr:hover {
   th[data-label="Descripción"] {
     max-width: 110px;
     font-size: 13px;
+    word-break: break-word;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
@@ -80,6 +84,14 @@ tr:hover {
     white-space: pre-wrap;
     font-weight: bold;
     content: attr(data-label);
+  }
+  td[data-label], th[data-label] {
+    word-break: break-word;
+    white-space: normal;
+    font-size: 12px;
+    max-width: 90vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .popup-content {
     max-width: 98vw;
