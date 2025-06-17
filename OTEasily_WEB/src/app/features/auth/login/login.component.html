@@ -1,3 +1,4 @@
+<app-header (homeClicked)="onHomeClicked()"></app-header>
 <div class="login-container">
         <div *ngIf="errorMessage" class="error-container">
             <button class="error-close" (click)="errorMessage = null">&times;</button>
@@ -14,7 +15,8 @@
             <input type="password" id="password" name="password" #password placeholder="Ingresa tu contraseña" required>
 
             <button type="button" (click)="onSubmit($event, { usuario: username.value, password: password.value })">Autenticar</button>
-            <a href="#" class="register-link" (click)="onRegisterClick()">Registrar</a>
+            <a class="register-link" (click)="onRegisterClick()">Registrar</a>
         </form>
     </div>
+<app-footer></app-footer>
 

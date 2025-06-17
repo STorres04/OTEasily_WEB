@@ -1,7 +1,9 @@
-<app-header (homeClicked)="onHomeClicked()"></app-header>
+<!--<app-header (homeClicked)="onHomeClicked()"></app-header>
 <app-login *ngIf="showLogin" (registerClicked)="onRegisterClicked()" ngSkipHydration></app-login>
-<app-register *ngIf="!showLogin"></app-register>
-<app-footer></app-footer>
+<app-register *ngIf="!showLogin" (loginRedirect)="handleLoginRedirect()"></app-register>
+<app-menu *ngIf="!showLogin && !showRegister"></app-menu>
+<app-footer></app-footer>-->
+<router-outlet />
 <!--
 
 <app-task></app-task>

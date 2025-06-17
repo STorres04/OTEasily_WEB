@@ -1,0 +1,190 @@
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0 0 0;
+  font-size: 16px;
+  text-align: left;
+  font-family: 'Arial', sans-serif;
+  background: #fff;
+  color: #333;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+}
+
+th {
+  background-color: #333;
+  color: #fff;
+  font-weight: bold;
+  font-family: 'Arial', sans-serif;
+}
+
+tr:nth-child(even) {
+  background-color: #f7f7f7;
+}
+
+tr:hover {
+  background-color: #ececec;
+}
+
+@media (max-width: 900px) {
+  table {
+    font-size: 14px;
+  }
+  th, td {
+    padding: 6px;
+  }
+}
+
+@media (max-width: 600px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
+    width: 100%;
+  }
+  thead {
+    display: none;
+  }
+  tr {
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    background: #fff;
+    padding: 10px 0;
+  }
+  td {
+    border: none;
+    position: relative;
+    padding-left: 50%;
+    min-height: 30px;
+    text-align: left;
+    background: #f9f9f9;
+  }
+  td:before {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 45%;
+    white-space: pre-wrap;
+    font-weight: bold;
+    content: attr(data-label);
+  }
+}
+
+.task-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+  align-items: center;
+  justify-content: center; /* Centra los filtros horizontalmente */
+  background: #333;
+  border-radius: 6px;
+  padding: 14px 18px;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  align-items: center;
+}
+
+/* Asegura que la barra de filtros y la tabla tengan el mismo ancho y alineación */
+table {
+  margin-top: 0;
+}
+
+.filter-select, .filter-date {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: 'Arial', sans-serif;
+}
+.filter-btn {
+  padding: 7px 18px;
+  background: #fff;
+  color: #222;
+  border: none;
+  border-radius: 4px;
+  font-family: 'Arial', sans-serif;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.filter-btn:hover {
+  background: #888;
+  color: #fff;
+}
+.clear-btn {
+  background: #fff;
+  color: #222;
+  margin-left: 8px;
+}
+.clear-btn:hover {
+  background: #888;
+  color: #fff;
+}
+@media (max-width: 600px) {
+  .task-filters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 10px 5px;
+  }
+}
+
+.icon-table {
+  width: 25px;
+  height: 22px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.popup-content {
+  background: #fff;
+  color: #333;
+  border-radius: 10px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  padding: 32px 28px 24px 28px;
+  min-width: 340px;
+  max-width: 95vw;
+  font-family: 'Arial', sans-serif;
+}
+.popup-close {
+  position: absolute;
+  top: 18px;
+  right: 24px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #555;
+  cursor: pointer;
+}
+.popup-content h2 {
+  margin-top: 0;
+  color: #555;
+  font-size: 1.4rem;
+  margin-bottom: 18px;
+}
+.popup-row {
+  margin-bottom: 10px;
+  font-size: 1.05rem;
+}
+.popup-label {
+  font-weight: bold;
+  color: #222;
+  margin-right: 8px;
+}

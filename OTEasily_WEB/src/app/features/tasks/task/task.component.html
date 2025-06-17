@@ -1,0 +1,71 @@
+<!-- Barra de filtros -->
+<div class="task-filters">
+  <input type="text" name="usuario" class="filter-select" placeholder="Buscar usuario..." [(ngModel)]="selectedUsuario" (input)="onUsuarioInput($event)" list="usuariosList">
+  <datalist id="usuariosList">
+    <option *ngFor="let user of usuariosSugeridos" [value]="user.nombre">{{user.nombre}}</option>
+  </datalist>
+  <input type="date" name="fechaInicio" class="filter-date" placeholder="Fecha inicio" [(ngModel)]="selectedFechaInicio">
+  <input type="date" name="fechaFin" class="filter-date" placeholder="Fecha fin" [(ngModel)]="selectedFechaFin">
+  <select name="prioridad" class="filter-select" [(ngModel)]="selectedPrioridad">
+    <option value="">Todas las prioridades</option>
+    <option value="0">Prioridad Baja</option>
+    <option value="1">Prioridad Media</option>
+    <option value="2">Prioridad Alta</option>
+  </select>
+  <button class="filter-btn" (click)="buscarTareas()">Buscar</button>
+  <button class="filter-btn clear-btn" (click)="limpiarFiltros()">Limpiar</button>
+</div>
+
+<table border="1" style="width: 100%; border-collapse: collapse;">
+  <thead>
+    <tr>
+      <th>Acciones</th>
+      <th>Nombre de la Tarea</th>
+      <th>Descripción</th>
+      <th>Fecha de Inicio</th>
+      <th>Fecha de Fin</th>
+      <th>Fecha de Cierre</th>
+      <th>Fecha de Creación</th>
+      <th>Estado</th>
+      <th>Progreso</th>
+      <th>Prioridad</th>
+      <th>Responsable</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let task of tasks">
+      <td>
+        <img src="assets/error-icon.png" alt="Error" class="icon-table">
+        <img src="assets/ver-icon.png" alt="Ver" class="icon-table icon-ver" (click)="verTarea(task)">
+      </td>
+      <td data-label="Nombre de la Tarea">{{task.nombreTarea}}</td>
+      <td data-label="Descripción">{{task.descripcionTarea}}</td>
+      <td data-label="Fecha de Inicio">{{task.fechaIncio}}</td>
+      <td data-label="Fecha de Fin">{{task.fechaFin}}</td>
+      <td data-label="Fecha de Cierre">{{task.fechaCierre}}</td>
+      <td data-label="Fecha de Creación">{{task.fechaCreacion}}</td>
+      <td data-label="Estado">{{task.estado}}</td>
+      <td data-label="Progreso">{{task.progreso}}</td>
+      <td data-label="Prioridad">{{task.prioridad}}</td>
+      <td data-label="Responsable">{{task.responsable}}</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Popup de detalle de tarea -->
+<div class="popup-overlay" *ngIf="mostrarPopup">
+  <div class="popup-content">
+    <button class="popup-close" (click)="cerrarPopup()">&times;</button>
+    <h2>Detalle de Tarea</h2>
+    <div class="popup-row"><span class="popup-label">Nombre:</span> {{tareaSeleccionada?.nombreTarea}}</div>
+    <div class="popup-row"><span class="popup-label">Descripción:</span> {{tareaSeleccionada?.descripcionTarea}}</div>
+    <div class="popup-row"><span class="popup-label">Fecha de Inicio:</span> {{tareaSeleccionada?.fechaIncio}}</div>
+    <div class="popup-row"><span class="popup-label">Fecha de Fin:</span> {{tareaSeleccionada?.fechaFin}}</div>
+    <div class="popup-row"><span class="popup-label">Fecha de Cierre:</span> {{tareaSeleccionada?.fechaCierre}}</div>
+    <div class="popup-row"><span class="popup-label">Fecha de Creación:</span> {{tareaSeleccionada?.fechaCreacion}}</div>
+    <div class="popup-row"><span class="popup-label">Estado:</span> {{tareaSeleccionada?.estado}}</div>
+    <div class="popup-row"><span class="popup-label">Progreso:</span> {{tareaSeleccionada?.progreso}}</div>
+    <div class="popup-row"><span class="popup-label">Prioridad:</span> {{tareaSeleccionada?.prioridad}}</div>
+    <div class="popup-row"><span class="popup-label">Responsable:</span> {{tareaSeleccionada?.responsable}}</div>
+  </div>
+</div>
