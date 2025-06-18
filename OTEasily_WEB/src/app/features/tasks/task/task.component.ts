@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { TaskService, Task, Anotacion } from './task.service';
 import { AuthService } from '../../../shared/auth.service';
 import { Router } from '@angular/router';
@@ -45,27 +45,44 @@ export class TaskComponent implements OnInit {
 
   notificacionMensaje: string | null = null;
   notificacionTipo: 'success' | 'error' | null = null;
+  // Modo oscuro/claro
+  isDarkMode: boolean = false;
+  private isBrowser: boolean = false;
 
   constructor(
     private taskService: TaskService,
     private authService: AuthService,
     private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
     
   ) {
+    // Verificar si estamos en el navegador
+    this.isBrowser = isPlatformBrowser(this.platformId);
+    
     // Obtener el token y el ID del usuario desde el servicio de autenticación
     this.token = this.authService.getToken();
     this.idusuario = this.authService.getIdUsuario();
+    
+    // Cargar preferencia de tema solo en el navegador
+    if (this.isBrowser) {
+      this.loadThemePreference();
+    }
   }
-
   ngOnInit() {
     if (!this.token || !this.idusuario) {
       // Si no hay token o usuario, redirigir al login
       this.router.navigate(['/login']);
       return;
     }
+    
+    // Cargar tema si no se cargó en el constructor (fallback)
+    if (this.isBrowser && !localStorage.getItem('darkMode')) {
+      this.loadThemePreference();
+    }
+    
     this.cargarUsuarios();
     // Simulación de fechas y prioridad por defecto
-   this.loadTasks();
+    this.loadTasks();
    
   }
 
@@ -314,5 +331,40 @@ export class TaskComponent implements OnInit {
     this.mostrarPopupAnotaciones = false;
     this.anotacionesTarea = [];
     this.anotacionesCargando = false;
+  }
+  // Métodos para manejo del tema
+  loadThemePreference() {
+    if (!this.isBrowser) return;
+    
+    const savedTheme = localStorage.getItem('darkMode');
+    this.isDarkMode = savedTheme === 'true';
+    this.applyTheme();
+  }
+
+  toggleTheme() {
+    if (!this.isBrowser) return;
+    
+    this.isDarkMode = !this.isDarkMode;
+    localStorage.setItem('darkMode', this.isDarkMode.toString());
+    this.applyTheme();
+  }
+
+  applyTheme() {
+    if (!this.isBrowser) return;
+    
+    const body = document.body;
+    if (this.isDarkMode) {
+      body.classList.add('dark-mode');
+      body.style.backgroundColor = '#121212';
+      body.style.color = '#e0e0e0';
+    } else {
+      body.classList.remove('dark-mode');
+      body.style.backgroundColor = '';
+      body.style.color = '';
+    }
+    // Forzar re-render
+    setTimeout(() => {
+      document.dispatchEvent(new Event('themeChanged'));
+    }, 10);
   }
 }

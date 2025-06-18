@@ -27,6 +27,16 @@
       <option value="2">Alta</option>
     </select>
   </div>
+    <div class="filter-group">
+    <label for="themeToggle">Tema:</label>
+    <div class="theme-toggle">
+      <input type="checkbox" id="themeToggle" [(ngModel)]="isDarkMode" (change)="toggleTheme()">
+      <label for="themeToggle" class="toggle-label">
+        <span class="toggle-slider"></span>
+        <span class="toggle-text">{{ isDarkMode ? '🌙 Oscuro' : '☀️ Claro' }}</span>
+      </label>
+    </div>
+  </div>
   
   <div class="filter-actions">
     <button class="filter-btn" (click)="buscarTareas()">Buscar</button>
